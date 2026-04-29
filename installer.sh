@@ -15,7 +15,7 @@ main() {
 
     log "downloading archive from GitHub..."
     curl -L --progress-bar \
-        https://github.com/leverec/sigil/archive/refs/heads/sigil.zip \
+        https://github.com/leverec/sigil/archive/refs/heads/main.zip \
         -o sigil.zip
     ok "archive saved to: $(pwd)/sigil.zip"
 
