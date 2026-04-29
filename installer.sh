@@ -1,11 +1,11 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 set -e
+trap 'printf "[!!] installation failed at line %s\n" "$LINENO" >&2' ERR
 
-
-log()  { printf "[  ] %s\n" "$*"; }
-ok()   { printf "[OK] %s\n" "$*"; }
-err()  { printf "[!!] %s\n" "$*" >&2; }
+log()  { printf "[*] %s\n" "$*"; }
+ok()   { printf "\033[92m[+] %s\n\033[0m" "$*"; }
+err()  { printf "\033[31m[!] %s\n\033[0m" "$*" >&2; }
 sep()  { printf "%.0s─" {1..45}; printf "\n"; }
 
 main() {
@@ -13,56 +13,53 @@ main() {
     printf "     sigil installer\n"
     sep
 
-    # download
     log "downloading archive from GitHub..."
-    log "url : https://github.com/leverec/sigil/main.zip"
     curl -L --progress-bar \
-        https://github.com/leverec/sigil/archive/refs/heads/main.zip \
+        https://github.com/leverec/sigil/archive/refs/heads/sigil.zip \
         -o sigil.zip
     ok "archive saved to: $(pwd)/sigil.zip"
 
-    # extract
     log "extracting sigil.zip..."
-    unzip sigil.zip
+    DIR=$(unzip -Z1 sigil.zip | head -n1 | cut -d/ -f1)
+    unzip -qo sigil.zip
     rm sigil.zip
-    ok "extracted. removed sigil.zip"
+    mv "$DIR" sigil-temp
+    ok "extracted to: sigil-temp"
 
-    # move into place
-    log "moving sigil-main/ -> ~/.sigil/"
-    mv sigil-main ~/.sigil
-    ok "installed to: $HOME/.sigil/"
-
-    # binary setup
-    log "renaming sigil.sh -> sigil"
-    mv ~/.sigil/bin/sigil.sh ~/.sigil/bin/sigil
-    ok "renamed"
-
-    log "setting execute permission on binary..."
-    chmod +x ~/.sigil/bin/sigil
-    ok "chmod +x done"
-
-    log "copying binary to \$PREFIX/bin/ ($PREFIX/bin/)..."
-    cp ~/.sigil/bin/sigil "$PREFIX/bin/"
-    ok "binary available at: $PREFIX/bin/sigil"
-
-    # version check
-    log "fetching latest release tag from GitHub API..."
-    VERSION=$(curl -s "https://api.github.com/repos/leverec/sigil/releases/latest" \
-        | grep -Po '"tag_name": "\K[^"]*')
-
-    if [[ -z "$VERSION" ]]; then
-        err "could not resolve version from GitHub API (no releases?)"
-        VERSION="unknown"
-    else
-        ok "resolved version: $VERSION"
+    if [[ -d ~/.sigil ]]; then
+        printf "\033[33m[?] ~/.sigil already exists. overwrite? [y/N] \033[0m"
+        read -r CONFIRM
+        if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+            err "aborted by user"
+            rm -rf sigil-temp
+            exit 1
+        fi
     fi
 
-    # summary
+    log "installing to ~/.sigil/"
+    rm -rf ~/.sigil
+    mv sigil-temp ~/.sigil
+    ok "installed"
+
+    log "preparing binary..."
+    mv ~/.sigil/bin/sigil.sh ~/.sigil/bin/sigil
+    chmod +x ~/.sigil/bin/sigil
+    cp ~/.sigil/bin/sigil "$PREFIX/bin/"
+    ok "binary ready"
+
+    log "fetching latest release tag..."
+    VERSION=$(curl -s https://api.github.com/repos/leverec/sigil/releases/latest \
+        | sed -n 's/.*"tag_name": "\([^"]*\)".*/\1/p')
+
+    if [[ -z "$VERSION" ]]; then
+        VERSION="unknown"
+    fi
+
     sep
     printf "     install complete\n"
     sep
     printf "  github    : https://github.com/leverec/sigil\n"
-    printf "  version   : %s\n"   "${VERSION}"
+    printf "  version   : %s\n" "$VERSION"
     printf "  directory : ~/.sigil/\n"
     printf "  binary    : %s/bin/sigil\n" "$PREFIX"
     sep
