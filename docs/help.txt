@@ -1,0 +1,56 @@
+
+Usage:
+    sigil [OPTIONS]
+    sigil -t TARGET [SCRIPT_ARGS...] [@ MODIFIERS...]
+    sigil -s \?ACTION [PATH/TARGET] [-y]
+
+Overview:
+    Sigil is a tool to run scripts from a central directory without manually copying them.
+
+    When you run a tool:
+    1. Script is copied into current directory (CWD)
+    2. Script is executed using python3
+    3. Script is removed after execution (unless modified)
+
+Core Commands:
+    -v              Show version and project info
+    -l              List available tools
+    -h              Show global help
+    -h TARGET       Show sghelp() from a specific tool
+    -t TARGET       Run a tool from the scripts directory
+    -s \?ACTION     Enter setup mode to manage tools
+
+Script Arguments:
+    Any arguments after TARGET are passed directly into the script.
+
+    Example:
+        sigil -t gentrees --ignore .git
+    becomes:
+        python3 <temp_file>.py --ignore .git
+
+Modifiers (@):
+    Use "@" to mark the end of script arguments and start modifiers.
+
+    Available modifiers:
+        keep        Do not delete script after execution
+        origin      Use original filename (no random rename)
+
+    Example:
+        sigil -t gentrees --ignore .git @ keep origin
+
+Setup Mode (-s):
+    Manage your tools library (add or remove scripts). 
+    Note: Use "\" before "?" in some shells to avoid globbing issues.
+
+    Available actions:
+        ?set        Add/overwrite a tool from a local python file
+        ?rm         Remove an existing tool from sigil
+        ?lh         Show setup-specific help
+        -y, --yes   Force action without confirmation prompt
+
+    Example:
+        sigil -s \?set my_script.py
+        sigil -s \?rm old_tool -y
+
+Execution Flow:
+    sigil → main.py → copy script → run → cleanup (based on modifiers)

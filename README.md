@@ -1,1 +1,1 @@
-# COMING SOON
+# TESTING THE installer.sh
