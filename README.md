@@ -155,7 +155,7 @@ install `pip install pytest` if you don't have pytest
 Run the test suite using `pytest`:
 
 ```bash
-pytest test/
+pytest tests/
 ```
 
 personally, i recommend using `python3 -m pytest -v`
