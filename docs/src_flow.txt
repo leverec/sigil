@@ -1,0 +1,61 @@
+=========================================================
+Current src flow
+=========================================================
+
+1. --> sigil.sh getting called `/data/data/com.termux/files/usr/bin/sigil`
+    >>> located the ~/.sigil => has to be in /data/data/com.termux/files/home/.sigil
+        if not ? error
+    >>> once it finds the directory it'd export that directory
+    >>> then it also export it as a pythonpath
+2. --> sigil would pass all of the argument to .sigil/src/main.py
+3. --> .sigil/src/main.py would pass that again into .sigil/src/parser.py
+4. --> .sigil/src/parser.py would return that into this format:
+        COMMANDS : str
+        TARGET   : str
+        SCR_ARGV : list
+        TAIL     : list
+        TOKENS   : list
+    >>> only -t commands has a scr_argv and tail
+5. --> .sigil/src/main.py would put the returned value from .sigil/src/parser.py to .sigil/src/router.py
+6. --> .sigil/src/router.py would dispatch the parsed code
+    >>> it'd get that exported sigil home from the $PREFIX/bin/sigil using os.environ.get('SIGIL_HOME')
+    >>> if commands -h
+        .sigil/src/help.py
+        -> check the target, if it's empty. it'd display the sigil help
+           otherwise it'd run sghelp() from the target (target without suffixes, example: sigil -h target.py # error, sigil -h target # you're good)
+    >>> if commands -v or -l
+        .sigil/src/info.py
+        # because 2 of them share the same file .sigil/src/info.py
+        -> if -v ? it'd display sigil info, like:
+            Tools           : sigil
+            Version         : 1.0.0 (001)
+            Author          : leverec
+            Release date    : 29/04/2026
+            ...
+        -> if -l ? it'd display all available tools that you can probably run using sigil -t [TOOLS]
+    >>> if commands -t
+        .sigil/src/script.py
+        -> check the available tools
+        -> check for modifiers
+        -> generate new filename if there's no origin modifiers
+        -> copy from .sigil/tools/target into $CWD/target_new_names if no origin modifiers can be found, else $CWD/target
+        -> running 'python3 [TARGET] [SCR_ARGV (if none then nothing)]'
+        -> remove the script from CWD if there's no keep modifiers
+    >>> if command -s
+        .sigil/src/setup.py
+        -> if ?set
+            -> check if target exists
+            -> check if it's python file (only check the suffix)
+            -> check for tools that already in
+            -> if duplicate detected at tools/ then it'd need comfirmation to overwrite it (force yes would skip this)
+            -> copy the file into .sigil/tools/
+        -> if ?rm
+            -> check if input using .py, if yes then it'd removed it automatically
+            -> check if target exists
+            -> confirmation before removing a tools (force yes would skip this)
+        -> if ?lh
+            just shows this
+            sigil -s \?set ... # add new tools
+            sigil -s \?rm  ... # remove tools
+            sigil -s \?lh      # show this help and exit
+        # \ use is used if your terminal had some globaling issues with ? standalone
