@@ -14,7 +14,7 @@ def info(sigil_home):
     tools_amount = len(tools)
     info_text = f"""
 Tools           : sigil
-Version         : 1.0.0 (001)
+Version         : 1.0.0 (002)
 Author          : leverec
 Release date    : 29/04/2026
 

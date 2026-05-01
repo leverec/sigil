@@ -28,7 +28,7 @@ main() {
 
     if [[ -d ~/.sigil ]]; then
         printf "\033[33m[?] ~/.sigil already exists. overwrite? [y/N] \033[0m"
-        read -r CONFIRM
+        read -r CONFIRM < /dev/tty
         if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
             err "aborted by user"
             rm -rf sigil-temp
