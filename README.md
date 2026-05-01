@@ -2,10 +2,14 @@
 
 > *A tools that make your life easier*
 
-[![Python](https://img.shields.io/badge/Python%203.13+-3670a0?logo=python&logoColor=ffdd54)](https://www.python.org/downloads/)
-[![Shell](https://img.shields.io/badge/GNU--Bash-4eaa25?logo=gnubash&logoColor=fff)](#)
+[![Python](https://img.shields.io/badge/Python%203.6+-3670a0?logo=python&logoColor=ffdd54)](https://www.python.org/downloads/)
+![Shell](https://img.shields.io/badge/GNU--Bash-4eaa25?logo=gnubash&logoColor=fff)
 [![!Termux](https://img.shields.io/badge/Android-Termux-black?logo=android&labelColor=brightgreen&logoColor=fff)](#)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0%20License-yellow?)](https://opensource.org/license/Apache-2.0)
+[![Install Sigil](https://img.shields.io/badge/Install-sigil-green)](#installation)
+![Version](https://img.shields.io/github/v/release/leverec/sigil?label=version)
+![GitHub repo size](https://img.shields.io/github/repo-size/leverec/sigil)
+![GitHub code size](https://img.shields.io/github/languages/code-size/leverec/sigil)
 
 **Seriously.**
 
